@@ -18,12 +18,14 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Headers", "GET, POST, PATCH, DELETE, PUT")
+        response.headers.add("Access-Control-Allow-Headers",
+                             "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Headers",
+                             "GET, POST, PATCH, DELETE, PUT")
         return response
 
     # GET Requests
-    # ______________________________________________________________________________
+    # ________________________________________________________________________
 
     @app.route("/api/v1/categories", methods=["GET"])
     def get_categories():
@@ -37,8 +39,10 @@ def create_app(test_config=None):
     def get_questions():
         page = request.args.get("page", default=1, type=int)
 
-        # questions query cannot have .all() after paginate method, so questions.items is used to create questions_list
-        questions = db.session.query(Question).paginate(page, QUESTIONS_PER_PAGE, False)
+        # questions.items is used to create questions_list
+        questions = db.session.query(Question).paginate(page,
+                                                        QUESTIONS_PER_PAGE,
+                                                        False)
         questions_list = [question.format() for question in questions.items]
 
         categories = db.session.query(Category).all()
@@ -56,14 +60,16 @@ def create_app(test_config=None):
     @app.route("/api/v1/categories/<int:category_id>/questions")
     def get_questions_by_category(category_id):
 
-        category = db.session.query(Category).filter(Category.id == category_id).first()
+        category = db.session.query(Category).\
+            filter(Category.id == category_id).first()
 
         # Creates exception if category_id does not exist
         if category is None:
             return jsonify({"category_id": category_id,
                             "success": False,
                             "status": 404,
-                            "message": "The category specified in the URL doesn't exist. Please resubmit with "
+                            "message": "The category specified in the URL "
+                                       "doesn't exist. Please resubmit with "
                                        "a correct category id."}), 404
 
         questions = category.questions
@@ -77,17 +83,19 @@ def create_app(test_config=None):
         })
 
     # DELETE Requests
-    # _________________________________________________________________________________
+    # ________________________________________________________________________
 
     @app.route("/api/v1/questions/<int:question_id>", methods=["DELETE"])
     def delete_question(question_id):
-        question = db.session.query(Question).filter(Question.id == question_id).first()
+        question = db.session.query(Question).\
+            filter(Question.id == question_id).first()
 
         if question is None:
             return jsonify({"question_id": question_id,
                             "success": False,
                             "status": 404,
-                            "message": "The question specified in the URL doesn't exist. Please resubmit with "
+                            "message": "The question specified in the URL"
+                                       " doesn't exist. Please resubmit with "
                                        "a correct question id"}), 404
         try:
             Question.delete(question)
@@ -100,7 +108,7 @@ def create_app(test_config=None):
         return app.response_class(status=204)
 
     # POST Requests
-    # __________________________________________________________________________________
+    # ________________________________________________________________________
 
     @app.route("/api/v1/questions", methods=["POST"])
     def post_new_question():
@@ -137,7 +145,8 @@ def create_app(test_config=None):
         if search_term is None:
             abort(400)
 
-        questions = db.session.query(Question).filter(Question.question.ilike("%" + search_term + "%")).all()
+        questions = db.session.query(Question)\
+            .filter(Question.question.ilike("%" + search_term + "%")).all()
         question_list = [question.format() for question in questions]
 
         return jsonify({
@@ -160,7 +169,7 @@ def create_app(test_config=None):
         if quiz_category_type is None:
             abort(422)
 
-        # Filters out the available question ids if they're in previous questions
+        # Filters out the available question ids based on previous questions
         # The "click" type is for the ALL category
         if quiz_category_type == "click":
             ids = db.session.query(Question.id).all()
@@ -176,7 +185,8 @@ def create_app(test_config=None):
             if type(quiz_category_id) is not int:
                 abort(422)
 
-            quiz_category_query_check = db.session.query(Category.id).filter(Category.id == quiz_category_id).first()
+            quiz_category_query_check = db.session.query(Category.id).\
+                filter(Category.id == quiz_category_id).first()
             if quiz_category_query_check is None:
                 abort(422)
 
@@ -195,7 +205,8 @@ def create_app(test_config=None):
         else:
             questions_per_play = min(5, len(ids))
             question_id = choice(filtered_ids)
-            question = db.session.query(Question).filter(Question.id == question_id).first()
+            question = db.session.query(Question).\
+                filter(Question.id == question_id).first()
 
             return jsonify({"question": Question.format(question),
                             "questions_per_play": questions_per_play,
@@ -226,7 +237,8 @@ def create_app(test_config=None):
         return jsonify({
             "success": False,
             "status": 422,
-            "message": "The json that was sent did not include a proper field. Please refer to documentation."
+            "message": "The json that was sent did not include a proper field. "
+                       "Please refer to documentation."
         }), 422
 
     @app.errorhandler(500)
