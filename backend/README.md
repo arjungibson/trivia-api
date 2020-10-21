@@ -54,7 +54,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 
 ## API Documentation
 
-https://app.swaggerhub.com/apis-docs/Arjun-Code/Udacity-Trivia-API/1.0.0#/
+You can find the documentation at this URL: https://app.swaggerhub.com/apis-docs/Arjun-Code/Udacity-Trivia-API/1.0.0#/
 
 
 ## Testing
