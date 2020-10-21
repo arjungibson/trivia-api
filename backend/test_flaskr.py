@@ -33,11 +33,16 @@ class TriviaTestCase(unittest.TestCase):
             self.db.session.commit()
 
             # adds categories
-            self.db.engine.execute("insert into categories (id, type) values (1, 'Animals')")
-            self.db.engine.execute("insert into categories (id, type) values (2, 'Math');")
-            self.db.engine.execute("insert into categories (id, type) values (3, 'Science');")
-            self.db.engine.execute("insert into categories (id, type) values (4, 'Disney');")
-            self.db.engine.execute("insert into categories (id, type) values (5, 'Sci-Fi');")
+            self.db.engine.execute("insert into categories (id, type) "
+                                   "values (1, 'Animals')")
+            self.db.engine.execute("insert into categories (id, type) "
+                                   "values (2, 'Math');")
+            self.db.engine.execute("insert into categories (id, type) "
+                                   "values (3, 'Science');")
+            self.db.engine.execute("insert into categories (id, type) "
+                                   "values (4, 'Disney');")
+            self.db.engine.execute("insert into categories (id, type) "
+                                   "values (5, 'Sci-Fi');")
 
             # adds a row to be deleted in the "test_delete_question" function
             self.db.engine.execute(
@@ -102,7 +107,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['category_id'], 1000)
-        self.assertEqual(data['message'], "The category specified in the URL doesn't exist. Please resubmit with "
+        self.assertEqual(data['message'], "The category specified in the URL "
+                                          "doesn't exist. "
+                                          "Please resubmit with "
                                           "a correct category id.")
         self.assertEqual(data['status'], 404)
 
