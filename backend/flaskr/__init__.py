@@ -162,7 +162,7 @@ def create_app(test_config=None):
         body = request.get_json()
 
         previous_questions = body.get("previous_questions", None)
-        quiz_category_type = body.get("quiz_category").get("type", None)
+        quiz_category_type = body.get("quiz_category", None)
 
         if previous_questions is None:
             abort(422)
@@ -171,19 +171,11 @@ def create_app(test_config=None):
 
         # Filters out the available question ids based on previous questions
         # The "click" type is for the ALL category
-        if quiz_category_type == "click":
+        if quiz_category_type['id'] == 0:
             ids = db.session.query(Question.id).all()
             filtered_ids = [i.id for i in ids if i.id not in previous_questions]
         else:
-            if type(quiz_category_type) is not dict:
-                abort(422)
-
-            quiz_category_id = quiz_category_type.get("id", None)
-
-            if quiz_category_id is None:
-                abort(422)
-            if type(quiz_category_id) is not int:
-                abort(422)
+            quiz_category_id = quiz_category_type['id']
 
             quiz_category_query_check = db.session.query(Category.id).\
                 filter(Category.id == quiz_category_id).first()
