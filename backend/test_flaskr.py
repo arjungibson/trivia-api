@@ -186,7 +186,8 @@ class TriviaTestCase(unittest.TestCase):
     def test_play_quiz_all_categories(self):
         json_input = {
             "previous_questions": [1],
-            "quiz_category": {"type": "click"}
+            "quiz_category": {"type": "click",
+                             "id": 0}
         }
         res = self.client().post('/api/v1/quizzes', json=json_input)
         data = json.loads(res.data)
@@ -201,7 +202,8 @@ class TriviaTestCase(unittest.TestCase):
         json_input = {
             "previous_questions": [1],
             "quiz_category": {"type": {"id": 2,
-                                       "type": "Math"}}
+                                       "type": "Math"},
+                             "id": 2}
         }
         res = self.client().post('/api/v1/quizzes', json=json_input)
         data = json.loads(res.data)
@@ -227,59 +229,8 @@ class TriviaTestCase(unittest.TestCase):
     def test_422_bad_quiz_category_play_quiz(self):
         json_input = {
             "previous_questions": [1],
-            "quiz_category": {"type": "all"}
-        }
-        res = self.client().post('/api/v1/quizzes', json=json_input)
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['status'], 422)
-        self.assertGreaterEqual(len(data['message']), 0)
-
-    def test_422_no_dict_in_type_play_quiz(self):
-        json_input = {
-            "previous_questions": [1],
-            "quiz_category": {"type": ["hello"]}
-        }
-        res = self.client().post('/api/v1/quizzes', json=json_input)
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['status'], 422)
-        self.assertGreaterEqual(len(data['message']), 0)
-
-    def test_422_no_id_in_dict_in_type_play_quiz(self):
-        json_input = {
-            "previous_questions": [1],
-            "quiz_category": {"type": {"hello": 1}}
-        }
-        res = self.client().post('/api/v1/quizzes', json=json_input)
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['status'], 422)
-        self.assertGreaterEqual(len(data['message']), 0)
-
-    def test_422_no_quiz_type_play_quiz(self):
-        json_input = {
-            "previous_questions": [1],
-            "quiz_category": {"hello": 2}
-        }
-        res = self.client().post('/api/v1/quizzes', json=json_input)
-        data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['status'], 422)
-        self.assertGreaterEqual(len(data['message']), 0)
-
-    def test_422_large_quiz_category_play_quiz(self):
-        json_input = {
-            "previous_questions": [1],
-            "quiz_category": {"type": {"id": 100}}
+            "quiz_category": {"type": "all",
+                             "id": "0"}
         }
         res = self.client().post('/api/v1/quizzes', json=json_input)
         data = json.loads(res.data)
